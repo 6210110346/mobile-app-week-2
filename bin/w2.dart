@@ -1,8 +1,13 @@
 const String str = 'on 1 0 set inc inc inc set inc inc inc set set set inc';
 
 void main(List<String> arguments) {
-  var clock = Clock();
   var commands = str.split(' ');
+  Clock clock;
+  for (var i = 0; i < commands.length; i++) {
+    if (commands[i] == 'on') {
+      clock = Clock(int.parse(commands[i + 1]), int.parse(commands[i + 2]));
+    }
+  }
   for (var command in commands) {
     if (clock.currentState != null) {
       if (command == 'set') {
@@ -15,7 +20,14 @@ void main(List<String> arguments) {
 }
 
 class Clock {
-  var states = <State>[Idle(), SettingHour(), SettingMinute()];
+  Clock(int hour, int minute) {
+    states = <State>[
+      Idle(),
+      SettingHour(time: hour),
+      SettingMinute(time: minute)
+    ];
+  }
+  var states;
   int currentState;
   void nextState() {
     currentState = (currentState + 1) % 3;
