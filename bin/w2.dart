@@ -1,23 +1,42 @@
 const String str = 'on 1 0 set inc inc inc set inc inc inc set set set inc';
 
 void main(List<String> arguments) {
-  var states = <State>[Idle(), SettingHour(), SettingMinute()];
-  int currentState;
+  var clock = Clock();
   var commands = str.split(' ');
   for (var command in commands) {
-    if (command == 'set' && currentState != null) {
-      currentState = (currentState + 1) % 3;
+    if (clock.currentState != null) {
+      if (command == 'set') {
+        clock.nextState();
+      } else if (command == 'inc') {
+        clock.inc();
+      }
     }
   }
 }
 
-class Idle extends State {}
+class Clock {
+  var states = <State>[Idle(), SettingHour(), SettingMinute()];
+  int currentState;
+  void nextState() {
+    currentState = (currentState + 1) % 3;
+  }
+
+  void inc() {
+    states[currentState].inc();
+  }
+}
+
+class Idle extends State {
+  @override
+  void inc() {}
+}
 
 class SettingHour extends State {
   int time;
 
   SettingHour({this.time = 0});
 
+  @override
   void inc() {
     time = (time + 1) % 24;
   }
@@ -33,6 +52,7 @@ class SettingMinute extends State {
 
   SettingMinute({this.time = 0});
 
+  @override
   void inc() {
     time = (time + 1) % 60;
   }
@@ -43,4 +63,6 @@ class SettingMinute extends State {
   }
 }
 
-abstract class State {}
+abstract class State {
+  void inc();
+}
