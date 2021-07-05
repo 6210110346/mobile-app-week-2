@@ -1,12 +1,14 @@
 const String str = 'on 1 0 set inc inc inc set inc inc inc set set set inc';
 
 void main(List<String> arguments) {
-  Idle idle;
-  SettingHour hour;
-  SettingMinute minute;
-  State state;
-  bool clockOn;
+  var states = <State>[Idle(), SettingHour(), SettingMinute()];
+  int currentState;
   var commands = str.split(' ');
+  for (var command in commands) {
+    if (command == 'set' && currentState != null) {
+      currentState = (currentState + 1) % 3;
+    }
+  }
 }
 
 class Idle extends State {}
